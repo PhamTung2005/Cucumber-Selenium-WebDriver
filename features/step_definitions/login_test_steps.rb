@@ -1,42 +1,16 @@
-Given('login successfully') do
-    @driver = Selenium::WebDriver.for :chrome
-    @driver.get('http://the-internet.herokuapp.com/login')
-    @driver.manage.window.resize_to(886, 778)
-  end
+Given('the login page is open successful') do
   
-  When('users enter valid <username> and <password>') do
-    @driver.find_element(:id, 'username').click
-    @driver.find_element(:id, 'username').send_keys('tomsmith')
-    @driver.find_element(:id, 'password').click
-    @driver.find_element(:id, 'password').send_keys('SuperSecretPassword!')
-    @driver.find_element(:id, 'password').send_keys(:enter)
-  end
-  
-  Then('{string} result should be listed on page title') do |string|
-    expect(@driver.find_element(:id, 'flash').text).to include('You logged into a secure area!')
-    @driver.close
-  end
+  $driver.get "http://the-internet.herokuapp.com/login"
+end
 
-  Given('login unsuccessfully') do
-    @driver = Selenium::WebDriver.for :chrome
-    @driver.get('http://the-internet.herokuapp.com/login')
-    @driver.manage.window.resize_to(886, 778)
-  end
+When('users enter username {string} and password {string}') do |string, string2|
+  $driver.find_element(:id, "username").send_keys(string)
+  $driver.find_element(:id, "password").send_keys(string2)
+  $driver.find_element(:css, "[class='fa fa-2x fa-sign-in']").click
+end
+
+Then('the message {string} should be displayed on the screen') do |string|
+  warning_message = $driver.find_element(:css, "#flash").text
+  expect(string).to include(string)
   
-  When('user enter invalid username {string}') do |string|
-    @username = string 
-    @driver.find_element(:id, 'username').click
-    @driver.find_element(:id, 'username').send_keys(@username)
-  end
-  
-  When('and password {string}') do |string|
-    @password = string 
-    @driver.find_element(:id, 'password').click
-    @driver.find_element(:id, 'password').send_keys(@password)
-    @driver.find_element(:id, 'password').send_keys(:enter)
-  end
-  
-  Then('{string} result should be appeared on the screen') do |string|
-    expect(@driver.find_element(:id, 'flash').text).to include(string)
-    @driver.close
-  end
+end
